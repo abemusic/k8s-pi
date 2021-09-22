@@ -22,7 +22,9 @@ These are specific to my setup, so adjust accordingly!
 * 4-node rack: https://www.amazon.com/dp/B096MKY263
 * I also use the Raspberry Pi PoE+ Hat (https://www.raspberrypi.org/products/poe-plus-hat/) to provide power and data to each node from my switch. You must have a PoE capable switch with enough available power!
 
-> :information_source: Under normal/idle load, the power draw for each node is ~5W: ![image](https://user-images.githubusercontent.com/426666/134377917-7ff08ebe-8a09-49d4-afe4-0cf0c8bc274d.png)
+> :information_source: Under normal/idle load, the power draw for each node is ~5W
+
+![image](https://user-images.githubusercontent.com/426666/134377917-7ff08ebe-8a09-49d4-afe4-0cf0c8bc274d.png)
 
 
 ### Notes
