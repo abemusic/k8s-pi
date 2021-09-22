@@ -22,7 +22,7 @@ These are specific to my setup, so adjust accordingly!
 * 4-node rack: https://www.amazon.com/dp/B096MKY263
 * I also use the Raspberry Pi PoE+ Hat (https://www.raspberrypi.org/products/poe-plus-hat/) to provide power and data to each node from my switch. You must have a PoE capable switch with enough available power!
 
-NOTE: Under normal/idle load, the power draw for each node is ~5W: ![image](https://user-images.githubusercontent.com/426666/134377917-7ff08ebe-8a09-49d4-afe4-0cf0c8bc274d.png)
+> :information_source: Under normal/idle load, the power draw for each node is ~5W: ![image](https://user-images.githubusercontent.com/426666/134377917-7ff08ebe-8a09-49d4-afe4-0cf0c8bc274d.png)
 
 
 ### Notes
@@ -108,7 +108,7 @@ abe
 
 ### Install k3s
 
-NOTE: This is not meant to be a k3s cluster in HA mode. For more information on how to do this, please see their docs: https://rancher.com/docs/k3s/latest/en/installation/ha-embedded/
+> :warning: This is not meant to be a k3s cluster in HA mode. For more information on how to do this, please see their docs: https://rancher.com/docs/k3s/latest/en/installation/ha-embedded/
 
 I used `k3sup` to do all the heavy lifting for me. Pay special attention to the arguments provided to the command and adjust as necessary. Also, note that I have intentionally disabled both the `servicelb` and `traefik` services that `k3sup` wants to install by default. I will install and configure such things later to have more control over DNS and ingress.
 
@@ -197,7 +197,7 @@ Each helm chart managed by `helmsman` uses a corresponding values file for confi
 
 Easy...sort of! It depends on what you're exposing.
 
-NOTE: This also requires that `PowerDNS` be configured for the domain/zone (e.g, `k8s.shantylab.local`) and `external-dns` configured correctly to interact with `PowerDNS`
+> :information_source: This also requires that `PowerDNS` be configured for the domain/zone (e.g, `k8s.shantylab.local`) and `external-dns` configured correctly to interact with `PowerDNS`
 
 **For IngressRoute/Ingress resources**, it's kind of weird and I would love to figure out how to make it unweird. Basically, we're using Traefik 2.x to manage a single ingress controller and corresponding routing via its reverse proxy. To do this, we need to create a Traefik provided CRD resource called `IngressRoute` which is not the same as the Kubernetes `Ingress` resource. Unfortunately, Traefik doesn't appear to support `Ingress` and external-dns doesn't appear to support `IngressRoute`. So the silly workaround is to use `IngressRoute` like normal, specify the host, paths, endpoints, headers, middleware, etc, but also provide a "dummy" `Ingress` resource that external-dns can watch and update DNS for. See the [nginx example](nginx/nginx.yaml) for how I've done this.
 
