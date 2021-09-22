@@ -3,9 +3,16 @@ dashboard:
 ports:
   traefik:
     expose: true
+providers:
+  kubernetesIngress:
+    publishedService:
+      # enable for internal ingress resources
+      enabled: true
 service:
   spec:
-    # static IP
+    # Expose traefik on the external network
+    type: LoadBalancer
+    # With a static IP
     loadBalancerIP: 10.0.2.31
   annotations:
     external-dns.alpha.kubernetes.io/hostname: traefik.k8s.shantylab.local
