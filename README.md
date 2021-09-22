@@ -187,15 +187,15 @@ Each helm chart managed by `helmsman` uses a corresponding values file for confi
 * My lab's internal domain is `shantylab.local` and I've configured my network to do DNS forwarding for all `k8s.shantylab.local` to my exposed `PowerDNS` service at a hardcoded IP. I've configured my exposed services to be in these domains.
 * I configured `MetalLB` to issue IP addresses in a specific range on my VLAN. You must change this depending on your personal network settings. I highly recommend allowing `MetalLB` to issue a specific range of IP addresses on a network and disable your DHCP server from also issuing addresses in that range.
 
-## Useful URLs
+# Useful URLs
 
 * [Traefik Dashboard](http://traefik.k8s.shantylab.local:9000/dashboard/#/)
 
-## FAQ
+# FAQ
 
-Q: How do I expose a service/ingress and get a DNS entry for it?
+### How do I expose a service/ingress and get a DNS entry for it?
 
-A: Easy...sort of! It depends on what you're exposing.
+Easy...sort of! It depends on what you're exposing.
 
 NOTE: This also requires that `PowerDNS` be configured for the domain/zone (e.g, `k8s.shantylab.local`) and `external-dns` configured correctly to interact with `PowerDNS`
 
@@ -230,9 +230,9 @@ spec:
   type: LoadBalancer
 ```
 
-Q: How can I disable a Service from being exposed?
+### How can I disable a Service from being exposed?
 
-A: You have a couple of options depending on what you're trying to do.
+You have a couple of options depending on what you're trying to do.
 
 1. If you just don't want the Service exposed externally AT ALL, then drop the `type=LoadBalancer` and that should do the trick.
 2. If you want it exposed, but no DNS entry for it, then you can use the `external-dns.alpha.kubernetes.io/hostname` annotation on the Service and set its value to an empty string.
