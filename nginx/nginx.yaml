@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-1
+  labels:
+    app: nginx
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+# NOTICE that we don't expose this service, instead we'll expose it
+# via Traefik's reverse proxy using an IngressRoute and then also
+# create an Ingress route for DNS below.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: nginx
+---
+##
+# Create a Traefik CRD IngressRoute as traefik can do its thing
+##
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - kind: Rule
+    match: Host(`nginx.k8s.shantylab.local`)
+    priority: 10
+    services:
+    - kind: Service
+      name: nginx
+      namespace: default
+      passHostHeader: true
+      port: 80
+      responseForwarding:
+        flushInterval: 1ms
+      scheme: http
+      strategy: RoundRobin
+      weight: 10
+---
+##
+# And create a "dummy" Ingress resource for external-dns
+# to work until external-dns/traefik figure out what they're
+# going to do in the long run:
+# https://github.com/kubernetes-sigs/external-dns/issues/1257
+##
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  rules:
+    - host: nginx.k8s.shantylab.local
