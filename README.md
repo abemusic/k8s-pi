@@ -190,3 +190,19 @@ Each helm chart managed by `helmsman` uses a corresponding values file for confi
 ## Useful URLs
 
 * [Traefik Dashboard](http://traefik.k8s.shantylab.local:9000/dashboard/#/)
+
+## FAQ
+
+Q: How do I expose a service/ingress and get a DNS entry for it?
+
+A: Easy! Using the appropriate annotation, you can inform `external-dns` of your desired hostname. If you've exposed it as a `LoadBalancer`, then `MetalLB` will assign you an IP address and register it accordingly with `PowerDNS`. For example, say I wanted to expose an nginx service as `nginx.k8s.shantylab.local`, I would do use the following annotation in the `Service` resource:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: nginx.k8s.shantylab.local
+```
+
+NOTE this requires that `PowerDNS` be configured for the `k8s.shantylab.local` zone and `external-dns` configured correctly to interact with `PowerDNS`
