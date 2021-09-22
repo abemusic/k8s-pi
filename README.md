@@ -183,3 +183,7 @@ Each helm chart managed by `helmsman` uses a corresponding values file for confi
 * I use hardcoded IP addresses for some services so they don't change. `MetalLB` allows for this as long as there's no collision with an existing Service's `loadBalancerIP`.
 * My lab's internal domain is `shantylab.local` and I've configured my network to do DNS forwarding for all `k8s.shantylab.local` to my exposed `PowerDNS` service at a hardcoded IP. I've configured my exposed services to be in these domains.
 * I configured `MetalLB` to issue IP addresses in a specific range on my VLAN. You must change this depending on your personal network settings. I highly recommend allowing `MetalLB` to issue a specific range IP addresses on a network that are not being managed by a DHCP server in your network.
+
+## Useful URLs
+
+* [Traefik Dashboard](http://traefik.k8s.shantylab.local:9000/dashboard/#/)
