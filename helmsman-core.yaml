@@ -1,0 +1,61 @@
+metadata:
+  maintainer: 'abemusic'
+  description: 'k8s-pi DSF'
+  url: https://github.com/abemusic/k8s-pi
+
+namespaces:
+  lab-system:
+    protected: false
+
+helmRepos:
+  abemusic: https://abemusic.github.io/helm-charts
+  external-dns: https://kubernetes-sigs.github.io/external-dns
+  metallb: https://metallb.github.io/metallb
+  traefik: https://helm.traefik.io/traefik
+
+apps:
+  traefik:
+    chart: traefik/traefik
+    enabled: true
+    namespace: lab-system
+    priority: -1000
+    test: false
+    valuesFiles:
+      - helmvalues/traefik.values.yaml
+    version: 10.3.2
+  metallb:
+    chart: metallb/metallb
+    enabled: true
+    namespace: lab-system
+    priority: -999
+    test: false
+    valuesFiles:
+      - helmvalues/metallb.values.yaml
+    version: 0.10.2
+  postgres:
+    chart: abemusic/postgres
+    enabled: true
+    namespace: lab-system
+    priority: -500
+    test: false
+    valuesFiles:
+      - helmvalues/postgres.values.yaml
+    version: 0.1.0
+  powerdns:
+    chart: abemusic/powerdns
+    enabled: true
+    namespace: lab-system
+    priority: -200
+    test: false
+    valuesFiles:
+      - helmvalues/powerdns.values.yaml
+    version: 0.1.1
+  external-dns:
+    chart: external-dns/external-dns
+    enabled: true
+    namespace: lab-system
+    priority: -100
+    test: false
+    valuesFiles:
+      - helmvalues/external-dns.values.yaml
+    version: 1.2.0

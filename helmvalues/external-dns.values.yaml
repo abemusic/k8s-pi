@@ -1,0 +1,29 @@
+# enable powerdns provider
+provider: pdns
+
+# and extra arguments for the provider
+extraArgs:
+  - --pdns-server=http://powerdns-webserver.lab-system.svc.cluster.local:80
+  - --pdns-api-key=change-me
+
+# additional configuration for external-dns
+
+# only watch for annotations using the following domain
+domainFilters:
+  - k8s.shantylab.local
+
+# poll for changes every 30 seconds
+interval: 30s
+
+# enable debug logging
+logLevel: debug
+
+# when changes occur, fully sync with powerdns
+policy: sync
+
+# sources to watch for
+sources:
+  - service
+
+# a TXT record will be created with who "owns" the record
+txtOwnerId: external-dns

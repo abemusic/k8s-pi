@@ -1,0 +1,5 @@
+# initialize the databases/users
+initDbs:
+  - database: powerdns
+    username: powerdns
+    password: password

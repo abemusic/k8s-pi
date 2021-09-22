@@ -1,0 +1,11 @@
+dashboard:
+  enabled: true
+ports:
+  traefik:
+    expose: true
+service:
+  spec:
+    # static IP
+    loadBalancerIP: 10.0.2.31
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: traefik.k8s.shantylab.local

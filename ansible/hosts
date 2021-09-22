@@ -1,0 +1,12 @@
+[servers]
+k8s-node1.shantylab.local ansible_connection=ssh var_hostname=k8s-node1.shantylab.local
+
+[workers]
+k8s-node2.shantylab.local ansible_connection=ssh var_hostname=k8s-node2.shantylab.local var_primary_server=k8s-node1.shantylab.local
+k8s-node3.shantylab.local ansible_connection=ssh var_hostname=k8s-node3.shantylab.local var_primary_server=k8s-node1.shantylab.local
+k8s-node4.shantylab.local ansible_connection=ssh var_hostname=k8s-node4.shantylab.local var_primary_server=k8s-node1.shantylab.local
+
+[k8s:children]
+servers
+workers
+

@@ -1,0 +1,19 @@
+powerdns:
+  dnssec: false
+  domain: k8s.shantylab.local
+  postgres:
+    hostname: postgres.lab-system.svc.cluster.local
+    database: powerdns
+    password: password
+    username: powerdns
+  config:
+    loglevel: 6
+    log-dns-details: yes
+    log-dns-queries: yes
+    default-soa-content: ns1.@ hostmaster.@ 0 10800 3600 604800 3600
+
+service:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: powerdns
+  loadBalancerIP: 10.0.2.30
+  type: LoadBalancer
