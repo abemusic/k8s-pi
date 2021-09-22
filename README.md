@@ -112,7 +112,7 @@ NOTE: This is not meant to be a k3s cluster in HA mode. For more information on 
 
 I used `k3sup` to do all the heavy lifting for me. Pay special attention to the arguments provided to the command and adjust as necessary. Also, note that I have intentionally disabled both the `servicelb` and `traefik` services that `k3sup` wants to install by default. I will install and configure such things later to have more control over DNS and ingress.
 
-##### Start with the control plan
+##### Start with the control plane
 
 ```
 k3sup install --k3s-channel latest --host k8s-node1.shantylab.local --user abe --ssh-key ~/.ssh/id_rsa_k8s --k3s-extra-args '--disable servicelb --disable traefik --flannel-backend host-gw'
