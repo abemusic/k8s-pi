@@ -5,6 +5,7 @@ provider: pdns
 extraArgs:
   - --pdns-server=http://powerdns-webserver.lab-system.svc.cluster.local:80
   - --pdns-api-key=change-me
+  - --fqdn-template={{.Name}}.k8s.shantylab.local
 
 # additional configuration for external-dns
 
@@ -24,6 +25,7 @@ policy: sync
 # sources to watch for
 sources:
   - service
+  - ingress
 
 # a TXT record will be created with who "owns" the record
 txtOwnerId: external-dns
