@@ -118,7 +118,7 @@ I used `k3sup` to do all the heavy lifting for me. Pay special attention to the 
 k3sup install --k3s-channel latest --host k8s-node1.shantylab.local --user abe --ssh-key ~/.ssh/id_rsa_k8s --k3s-extra-args '--disable servicelb --disable traefik --flannel-backend host-gw'
 ```
 
-This will dump a `kubeconfig` file that can be used with `kubectl`. I don't manage any other clusters, so I moved this file to my home directory to be used by default. If you already have a kubee config file, you should only copy in the bits necessary and not accidentally overwrite your file.
+This will dump a `kubeconfig` file that can be used with `kubectl`. I don't manage any other clusters, so I moved this file to my home directory to be used by default. If you already have a kube config file, you should only copy in the bits necessary and not accidentally overwrite your file.
 
 ```
 mv kubeconfig ~/.kube/config
