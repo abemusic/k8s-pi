@@ -164,7 +164,7 @@ For this step, we'll use `helmsman` to automate the install of additional servic
 
 * [Traefik](https://traefik.io/): Reverse proxy and ingress controller that I use (with MetalLB) to provide external access to other services
 * [MetalLB](https://metallb.universe.tf/): Bare metal load balancer that can assign real IP addresses in my home network to k8s services of type `LoadBalancer`.
-* [Postgres](): We need a database for PowerDNS
+* [Postgres](https://www.postgresql.org/): We need a database for PowerDNS
 * [PowerDNS](https://www.powerdns.com/auth.html): Provides an API-driven DNS server that works with `external-dns` to resolve services and ingress internally in my cluster to my external network.
 * [external-dns](https://github.com/kubernetes-sigs/external-dns): Watches for internal services and ingress and informs `PowerDNS` of any changes that I would like to be made available externally to the cluster. For example, I may want to install ArgoCD in the cluster and make it available on my network as `argocd.k8s.shantylab.local`. If the service or ingress changes, external-dns will make the necessary change to my DNS server for proper resolution.
 
