@@ -195,14 +195,57 @@ Each helm chart managed by `helmsman` uses a corresponding values file for confi
 
 Q: How do I expose a service/ingress and get a DNS entry for it?
 
-A: Easy! Using the appropriate annotation, you can inform `external-dns` of your desired hostname. If you've exposed it as a `LoadBalancer`, then `MetalLB` will assign you an IP address and register it accordingly with `PowerDNS`. For example, say I wanted to expose an nginx service as `nginx.k8s.shantylab.local`, I would do use the following annotation in the `Service` resource:
+A: Easy...sort of! It depends on what you're exposing.
+
+NOTE: This also requires that `PowerDNS` be configured for the domain/zone (e.g, `k8s.shantylab.local`) and `external-dns` configured correctly to interact with `PowerDNS`
+
+**For IngressRoute/Ingress resources**, it's kind of weird and I would love to figure out how to make it unweird. Basically, we're using Traefik 2.x to manage a single ingress controller and corresponding routing via its reverse proxy. To do this, we need to create a Traefik provided CRD resource called `IngressRoute` which is not the same as the Kubernetes `Ingress` resource. Unfortunately, Traefik doesn't appear to support `Ingress` and external-dns doesn't appear to support `IngressRoute`. So the silly workaround is to use `IngressRoute` like normal, specify the host, paths, endpoints, headers, middleware, etc, but also provide a "dummy" `Ingress` resource that external-dns can watch and update DNS for. See the [nginx example](nginx/nginx.yaml) for how I've done this.
+
+**For Service resources**, only those of `type=LoadBalancer` will be considered. Beyond that, you have a couple options for deciding the actual FQDN for the DNS record.
+
+1. If you would like your DNS record to be named according to the name of your Service (e.g, `<service name>.k8s.shantylab.local`, then you don't have to do anything because `external-dns` has been configured by default to automatically build the FQDN using its `--fqdn-template` setting.
+2. If you want to override the FQDN, then provide the `external-dns.alpha.kubernetes.io/hostname` annotation to your Service and specify the FQDN as the value.
+
+Here's a service that will end up with `nginx.k8s.shantylab.local` as an A record in DNS simply because it exists and is of type `LoadBalancer`. The `k8s.shantylab.local` will automatically be applied by `external-dns` due to the `--fqdn-template` setting being used.
 
 ```
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: nginx.k8s.shantylab.local
+  name: nginx
+spec:
+  type: LoadBalancer
 ```
 
-NOTE this requires that `PowerDNS` be configured for the `k8s.shantylab.local` zone and `external-dns` configured correctly to interact with `PowerDNS`
+And here's the same Service, but it overrides the FQDN using the appropriate annotation:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: foobar.k8s.shantylab.local
+spec:
+  type: LoadBalancer
+```
+
+Q: How can I disable a Service from being exposed?
+
+A: You have a couple of options depending on what you're trying to do.
+
+1. If you just don't want the Service exposed externally AT ALL, then drop the `type=LoadBalancer` and that should do the trick.
+2. If you want it exposed, but no DNS entry for it, then you can use the `external-dns.alpha.kubernetes.io/hostname` annotation on the Service and set its value to an empty string.
+
+The following example will expose the Service on some IP address provided by `MetalLB`, but no DNS record will be generated in `PowerDNS`:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: ""
+spec:
+  type: LoadBalancer
+```
