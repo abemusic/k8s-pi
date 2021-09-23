@@ -4,12 +4,15 @@ metadata:
   url: https://github.com/abemusic/k8s-pi
 
 namespaces:
+  cert-manager:
+    protected: false
   lab-system:
     protected: false
 
 helmRepos:
   abemusic: https://abemusic.github.io/helm-charts
   external-dns: https://kubernetes-sigs.github.io/external-dns
+  jetstack: https://charts.jetstack.io
   metallb: https://metallb.github.io/metallb
   traefik: https://helm.traefik.io/traefik
 
@@ -32,6 +35,15 @@ apps:
     valuesFiles:
       - helmvalues/metallb.values.yaml
     version: 0.10.2
+  cert-manager:
+    chart: jetstack/cert-manager
+    enabled: true
+    namespace: cert-manager
+    priority: -999
+    test: false
+    valuesFiles:
+      - helmvalues/cert-manager.values.yaml
+    version: v1.5.3
   postgres:
     chart: abemusic/postgres
     enabled: true

@@ -1,0 +1,3 @@
+# install CRDs when installing chart
+installCRDs: true
+
