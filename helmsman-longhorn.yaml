@@ -1,0 +1,21 @@
+metadata:
+  maintainer: 'abemusic'
+  description: 'k8s-pi DSF'
+  url: https://github.com/abemusic/k8s-pi
+
+namespaces:
+  longhorn-system:
+    protected: false
+
+helmRepos:
+  longhorn: https://charts.longhorn.io
+
+apps:
+  longhorn:
+    chart: longhorn/longhorn
+    enabled: true
+    namespace: longhorn-system
+    test: false
+    valuesFiles:
+      - helmvalues/longhorn.values.yaml
+    version: 1.2.0

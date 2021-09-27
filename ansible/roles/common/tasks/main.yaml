@@ -1,0 +1,12 @@
+---
+
+- name: Install common packages
+  package:
+    name:
+      - jq
+    state: latest
+
+- name: Ensure vi bindings
+  lineinfile:
+    path: /etc/profile
+    line: set -o vi

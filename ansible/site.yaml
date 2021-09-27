@@ -1,0 +1,5 @@
+- name: apply common configuration to all nodes
+  hosts: k8s
+  roles:
+    - common
+  become: true

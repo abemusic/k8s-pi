@@ -1,0 +1,42 @@
+all:
+  hosts:
+    k8s-node1:
+      hostname: k8s-node1.shantylab.local
+      storage:
+        # Make sure your storage device is correct!!!
+        device_path: /dev/sda1
+        # Mount the storage to longhorn's default location
+        mount_path: /var/lib/longhorn
+        # To label the filesystem
+        device_label: node1
+    k8s-node2:
+      hostname: k8s-node2.shantylab.local
+      storage:
+        device_path: /dev/sda1
+        mount_path: /var/lib/longhorn
+        device_label: node2
+    k8s-node3:
+      hostname: k8s-node3.shantylab.local
+      storage:
+        device_path: /dev/sda1
+        mount_path: /var/lib/longhorn
+        device_label: node3
+    k8s-node4:
+      hostname: k8s-node4.shantylab.local
+      storage:
+        device_path: /dev/sda1
+        mount_path: /var/lib/longhorn
+        device_label: node4
+  children:
+    servers:
+      hosts:
+        k8s-node1:
+    workers:
+      hosts:
+        k8s-node2:
+        k8s-node3:
+        k8s-node4:
+    k8s:
+      children:
+        servers:
+        workers:
