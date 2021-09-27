@@ -1,0 +1,80 @@
+---
+- name: Shortcut facts
+  set_fact:
+    device_path: "{{ hostvars[inventory_hostname].storage.device_path }}"
+    device_label: "{{ hostvars[inventory_hostname].storage.device_label }}"
+    mount_path: "{{ hostvars[inventory_hostname].storage.mount_path }}"
+
+- name: Device facts
+  set_fact:
+    device: "{{ device_path | regex_search('^\/dev\/(.*)[0-9]+$', '\\1') | first }}"
+    partition: "{{ device_path | regex_search('^\/dev\/(.*[0-9]+)$', '\\1') | first }}"
+    partition_number: "{{ device_path | regex_search('^\/dev\/.*([0-9]+)$', '\\1') | first }}"
+
+- name: More shortcut facts
+  set_fact:
+    lock_file: "{{ mount_path }}/.lock"
+    has_device: "{{ device in ansible_devices }}"
+    has_partition: "{{ device in ansible_devices and partition in ansible_devices[device].partitions }}"
+
+- name: Check for lock file
+  stat:
+    path: "{{ lock_file }}"
+  register: stat_info
+
+- name: Fail if lock file is present
+  fail:
+    msg: "Lock file exists! Aborting to prevent data loss. Remove '{{ lock_file }}' and try again if you want to rebuild filesystem."
+  when: stat_info.stat.exists
+
+- name: Fail if missing device
+  fail:
+    msg: "Could not find device '{{ device }}'. Check that device_path '{{ device_path }}' is correct."
+  when: not has_device
+
+- name: Unmount {{ device_path }}
+  mount:
+    src: "{{ device_path }}"
+    path: "{{ mount_path }}"
+    state: unmounted
+
+- name: Gather device info
+  parted:
+    device: "/dev/{{ device }}"
+    unit: MiB
+  register: parted_info
+
+- name: Removing existing partitions
+  parted:
+    device: "/dev/{{ device }}"
+    number: "{{ item.num }}"
+    state: absent
+  loop: "{{ parted_info.partitions }}"
+
+- name: Create partition {{ device_path }}
+  parted:
+    device: "/dev/{{ device }}"
+    number: "{{ partition_number }}"
+    state: present
+
+- name: Create ext4 filesystem on {{ device_path }}
+  filesystem:
+    fstype: ext4
+    dev: "{{ device_path }}"
+    opts: "-L {{ device_label }}"
+    force: true
+
+- name: Mount {{ device_path }}
+  mount:
+    src: "{{ device_path }}"
+    path: "{{ mount_path }}"
+    fstype: ext4
+    opts: discard,errors=remount-ro
+    dump: "0"
+    passno: "1"
+    state: mounted
+
+- name: Set lock file to prevent running again and destroying data
+  ansible.builtin.file:
+    path: "{{ lock_file }}"
+    state: touch

@@ -1,0 +1,42 @@
+##
+# Create a Traefik CRD IngressRoute as traefik can do its thing
+##
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  entryPoints:
+    - web
+  routes:
+  - kind: Rule
+    match: Host(`longhorn.k8s.shantylab.local`)
+    priority: 10
+    services:
+    - kind: Service
+      name: longhorn-frontend
+      namespace: longhorn-system
+      passHostHeader: true
+      port: 80
+      responseForwarding:
+        flushInterval: 1ms
+      scheme: http
+      strategy: RoundRobin
+      weight: 10
+---
+##
+# And create a "dummy" Ingress resource for external-dns
+# to work until external-dns/traefik figure out what they're
+# going to do in the long run:
+# https://github.com/kubernetes-sigs/external-dns/issues/1257
+##
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  rules:
+    - host: longhorn.k8s.shantylab.local
+

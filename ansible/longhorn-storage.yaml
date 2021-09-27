@@ -1,0 +1,5 @@
+- name: Setup USB storage for longhorn
+  hosts: k8s
+  roles:
+    - longhorn
+  become: true
